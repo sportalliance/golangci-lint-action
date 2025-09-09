@@ -1,6 +1,6 @@
 import * as core from "@actions/core"
 import * as tc from "@actions/tool-cache"
-import { exec, ExecOptionsWithStringEncoding } from "child_process"
+import { exec, ExecOptions } from "child_process"
 import os from "os"
 import path from "path"
 import { promisify } from "util"
@@ -82,7 +82,7 @@ async function goInstall(versionInfo: VersionInfo): Promise<string> {
 
   const startedAt = Date.now()
 
-  const options: ExecOptionsWithStringEncoding = { env: { ...process.env, CGO_ENABLED: "1" } }
+  const options: ExecOptions = { env: { ...process.env, CGO_ENABLED: "1" } }
 
   const exres = await execShellCommand(
     `go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${versionInfo.TargetVersion}`,
@@ -160,20 +160,21 @@ function getAssetURL(versionInfo: VersionInfo): string {
       break
   }
 
-  let platformArch = "amd64"
-  switch (os.arch()) {
+  let arch = os.arch()
+  switch (arch) {
     case "arm64":
-      platformArch = "arm64"
+      arch = "arm64"
       break
     case "x64":
-      platformArch = "amd64"
+      arch = "amd64"
       break
+    case "x32":
     case "ia32":
-      platformArch = "386"
+      arch = "386"
       break
   }
 
   const noPrefix = versionInfo.TargetVersion.slice(1)
 
-  return `https://github.com/golangci/golangci-lint/releases/download/${versionInfo.TargetVersion}/golangci-lint-${noPrefix}-${platform}-${platformArch}.${ext}`
+  return `https://github.com/golangci/golangci-lint/releases/download/${versionInfo.TargetVersion}/golangci-lint-${noPrefix}-${platform}-${arch}.${ext}`
 }
