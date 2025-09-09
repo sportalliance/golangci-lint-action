@@ -54,9 +54,9 @@ jobs:
         with:
           go-version: stable
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.1
+          version: v2.0
 ```
 
 </details>
@@ -92,9 +92,9 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.1
+          version: v2.0
 ```
 
 You will also likely need to add the following `.gitattributes` file to ensure that line endings for Windows builds are properly formatted:
@@ -147,10 +147,11 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
       - name: golangci-lint ${{ matrix.modules }}
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v7
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           working-directory: ${{ matrix.modules }}
+          args: --path-mode=abs
 ```
 
 </details>
@@ -229,10 +230,11 @@ jobs:
         with:
           go-version: ${{ inputs.go-version }}
       - name: golangci-lint ${{ matrix.modules }}
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v7
         with:
           version: ${{ inputs.golangci-lint-version }}
           working-directory: ${{ matrix.modules }}
+          args: --path-mode=abs
 ```
 
 You will also likely need to add the following `.gitattributes` file to ensure that line endings for Windows builds are properly formatted:
@@ -245,7 +247,6 @@ You will also likely need to add the following `.gitattributes` file to ensure t
 
 ## Compatibility
 
-* `v8.0.0` works with `golangci-lint` version >= `v2.1.0`
 * `v7.0.0` supports golangci-lint v2 only.
 * `v6.0.0+` removes `annotations` option, removes the default output format (`github-actions`).
 * `v5.0.0+` removes `skip-pkg-cache` and `skip-build-cache` because the cache related to Go itself is already handled by `actions/setup-go`.
@@ -272,9 +273,9 @@ When `install-mode` is:
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
-  version: v2.1
+  version: v2.0
   # ...
 ```
 
@@ -292,7 +293,7 @@ The default value is `binary`.
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   install-mode: "goinstall"
   # ...
@@ -312,7 +313,7 @@ By default, it uses the `github.token` from the action.
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   github-token: xxx
   # ...
@@ -335,7 +336,7 @@ The JSON Schema used to validate the configuration depends on the version of gol
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   verify: false
   # ...
@@ -360,7 +361,7 @@ The default value is `false`.
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   only-new-issues: true
   # ...
@@ -378,7 +379,7 @@ Working directory, useful for monorepos.
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   working-directory: somedir
   # ...
@@ -403,7 +404,7 @@ golangci-lint command line arguments.
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   # In some rare cases,
   # you could have to use `${{ github.workspace }}` as base directory to reference your configuration file.
@@ -431,7 +432,7 @@ The default value is `false`.
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   problem-matchers: true
   # ...
@@ -452,7 +453,7 @@ The default value is `false`.
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   skip-cache: true
   # ...
@@ -472,7 +473,7 @@ The default value is `false`.
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   skip-save-cache: true
   # ...
@@ -494,7 +495,7 @@ If the number is `<= 0`, the cache will always be invalidated (Not recommended).
 <summary>Example</summary>
 
 ```yml
-uses: golangci/golangci-lint-action@v8
+uses: golangci/golangci-lint-action@v7
 with:
   cache-invalidation-interval: 15
   # ...
