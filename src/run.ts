@@ -51,7 +51,7 @@ async function runLint(binPath: string, patchPath: string): Promise<void> {
     printOutput(res)
   }
 
-  const userArgs = core.getInput(`args`)
+  let userArgs = core.getInput(`args`)
   const addedArgs: string[] = []
 
   const userArgsList = userArgs
@@ -76,13 +76,23 @@ async function runLint(binPath: string, patchPath: string): Promise<void> {
     }
   }
 
+  const formats = (userArgsMap.get("out-format") || "")
+    .trim()
+    .split(",")
+    .filter((f) => f.length > 0)
+    .filter((f) => !f.startsWith(`github-actions`)) // Removes `github-actions` format.
+    .join(",")
+
+  if (formats) {
+    // Adds formats but without `github-actions` format.
+    addedArgs.push(`--out-format=${formats}`)
+  }
+
+  // Removes `--out-format` from the user flags because it's already inside `addedArgs`.
+  userArgs = userArgs.replace(/--out-format=\S*/gi, "").trim()
+
   if (isOnlyNewIssues()) {
-    if (
-      userArgNames.has(`new`) ||
-      userArgNames.has(`new-from-rev`) ||
-      userArgNames.has(`new-from-patch`) ||
-      userArgNames.has(`new-from-merge-base`)
-    ) {
+    if (userArgNames.has(`new`) || userArgNames.has(`new-from-rev`) || userArgNames.has(`new-from-patch`)) {
       throw new Error(`please, don't specify manually --new* args when requesting only new issues`)
     }
 
@@ -100,7 +110,6 @@ async function runLint(binPath: string, patchPath: string): Promise<void> {
           // Override config values.
           addedArgs.push(`--new=false`)
           addedArgs.push(`--new-from-rev=`)
-          addedArgs.push(`--new-from-merge-base=`)
         }
         break
       case `merge_group`:
@@ -109,7 +118,6 @@ async function runLint(binPath: string, patchPath: string): Promise<void> {
         // Override config values.
         addedArgs.push(`--new=false`)
         addedArgs.push(`--new-from-patch=`)
-        addedArgs.push(`--new-from-merge-base=`)
         break
       default:
         break
@@ -142,6 +150,7 @@ async function runLint(binPath: string, patchPath: string): Promise<void> {
     core.info(`golangci-lint found no issues`)
   } catch (exc) {
     // This logging passes issues to GitHub annotations but comments can be more convenient for some users.
+    // TODO: support reviewdog or leaving comments by GitHub API.
     printOutput(exc)
 
     if (exc.code === 1) {

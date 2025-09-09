@@ -1,7 +1,6 @@
-version: "2"
-
 output:
   show-stats: true
+  sort-results: true
   sort-order:
-    - file
     - linter
+    - file
